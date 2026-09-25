@@ -37,9 +37,9 @@ description: "終端機猜數字遊戲的任務清單"
 
 **Purpose**: 專案骨架與測試設定
 
-- [ ] T001 依 plan.md 建立目錄結構：`src/guessing_game/`（含空的 `__init__.py`）、`tests/unit/`、`tests/integration/`
-- [ ] T002 建立 `pyproject.toml`，僅含 `[tool.pytest.ini_options]`：`pythonpath = ["src"]`、`testpaths = ["tests"]`；不得加入 `[project]` 或任何相依（research D9）
-- [ ] T003 [P] 建立或更新儲存庫根目錄的 `.gitignore`，忽略 `__pycache__/`、`.pytest_cache/`、`*.pyc`
+- [X] T001 依 plan.md 建立目錄結構：`src/guessing_game/`（含空的 `__init__.py`）、`tests/unit/`、`tests/integration/`
+- [X] T002 建立 `pyproject.toml`，僅含 `[tool.pytest.ini_options]`：`pythonpath = ["src"]`、`testpaths = ["tests"]`；不得加入 `[project]` 或任何相依（research D9）
+- [X] T003 [P] 建立或更新儲存庫根目錄的 `.gitignore`，忽略 `__pycache__/`、`.pytest_cache/`、`*.pyc`
 
 ---
 
@@ -49,12 +49,12 @@ description: "終端機猜數字遊戲的任務清單"
 
 **⚠️ CRITICAL**: 完成前不得開始任何 User Story
 
-- [ ] T004 [P] 在 `tests/unit/test_cli_parsing.py` 撰寫 `parse_guess` 與 `parse_play_again` 的單元測試（先寫、須先失敗）：
+- [X] T004 [P] 在 `tests/unit/test_cli_parsing.py` 撰寫 `parse_guess` 與 `parse_play_again` 的單元測試（先寫、須先失敗）：
   - `parse_guess`：`"42"`→42、`"1"`→1、`"100"`→100；`" 42 "`→42（忽略前後空白，FR-015）；`"0"`→0、`"101"`→101、`"-5"`→-5（格式合法、交由 engine 判斷範圍）；數字部分超過 18 位（如 `"9" * 19`）→`10**18`，`"-" + "9" * 19`→`-(10**18)`；`None` 案例：`""`、`"   "`、`"3.5"`、`"50.0"`、`"abc"`、`"#"`、`"+5"`、`"007"`、`"1_0"`、`"５"`（全形數字）
   - `parse_play_again`：`""`、`"   "`→`REPLAY`；`"n"`、`"N"`、`" n "`→`QUIT`；`"y"`、`"yes"`、`"abc"`、`"nn"`→`UNKNOWN`
-- [ ] T005 [P] 建立 `src/guessing_game/engine.py`，僅含 `GuessResult(enum.Enum)`，成員 `TOO_HIGH`、`TOO_LOW`、`CORRECT`（data-model.md），附模組與類別 docstring
-- [ ] T006 建立 `src/guessing_game/cli.py`：定義 `PlayAgainChoice(enum.Enum)`（`REPLAY`、`QUIT`、`UNKNOWN`）、`parse_guess(raw: str) -> int | None`（`strip()` 後以 `^-?(0|[1-9][0-9]*)$` 判定，使用 `[0-9]` 不得用 `\d`／`isdigit()`；數字部分超過 18 位時直接回傳 `±10**18`、不呼叫 `int()`；不符格式回傳 `None`）、`parse_play_again(raw: str) -> PlayAgainChoice`（`strip()` 後空字串→`REPLAY`、`lower()` 等於 `"n"`→`QUIT`、其他→`UNKNOWN`）；使 T004 的測試通過（依賴 T004）
-- [ ] T007 [P] 在 `tests/unit/test_architecture.py` 以 `ast` 解析 `src/guessing_game/engine.py`，斷言：(1) 不存在對 `input`、`print` 的呼叫；(2) 不存在 `import cli`、`from guessing_game import cli`、`from guessing_game.cli import ...` 或 `from . import cli` 等匯入；(3) 不匯入 `logging`（依賴 T005）
+- [X] T005 [P] 建立 `src/guessing_game/engine.py`，僅含 `GuessResult(enum.Enum)`，成員 `TOO_HIGH`、`TOO_LOW`、`CORRECT`（data-model.md），附模組與類別 docstring
+- [X] T006 建立 `src/guessing_game/cli.py`：定義 `PlayAgainChoice(enum.Enum)`（`REPLAY`、`QUIT`、`UNKNOWN`）、`parse_guess(raw: str) -> int | None`（`strip()` 後以 `^-?(0|[1-9][0-9]*)$` 判定，使用 `[0-9]` 不得用 `\d`／`isdigit()`；數字部分超過 18 位時直接回傳 `±10**18`、不呼叫 `int()`；不符格式回傳 `None`）、`parse_play_again(raw: str) -> PlayAgainChoice`（`strip()` 後空字串→`REPLAY`、`lower()` 等於 `"n"`→`QUIT`、其他→`UNKNOWN`）；使 T004 的測試通過（依賴 T004）
+- [X] T007 [P] 在 `tests/unit/test_architecture.py` 以 `ast` 解析 `src/guessing_game/engine.py`，斷言：(1) 不存在對 `input`、`print` 的呼叫；(2) 不存在 `import cli`、`from guessing_game import cli`、`from guessing_game.cli import ...` 或 `from . import cli` 等匯入；(3) 不匯入 `logging`（依賴 T005）
 
 **Checkpoint**: 列舉與純函式就緒，架構檢查可運作 — User Story 可開始
 
@@ -68,14 +68,14 @@ description: "終端機猜數字遊戲的任務清單"
 
 ### Tests for User Story 1 ⚠️（先寫、須先失敗）
 
-- [ ] T008 [P] [US1] 在 `tests/unit/test_engine.py` 撰寫開局測試：定義測試用 `RecordingRandom(random.Random)`，覆寫 `randint` 以記錄參數並回傳固定值；斷言建構 `GameEngine(rng)` 時 `randint` 以 `(1, 100)` 被呼叫恰好一次；`MIN_NUMBER == 1`、`MAX_NUMBER == 100`；初始 `attempts == 0`、`is_finished is False`；呼叫 `start_new_round()` 後 `randint` 再次以 `(1, 100)` 被呼叫、`attempts == 0`、`is_finished is False`；未提供 `rng` 時可正常建構（FR-001、SC-002）
-- [ ] T009 [P] [US1] 在 `tests/integration/test_cli_flow.py` 撰寫 US1 測試：`configure_logging()` 後 `logging.getLogger("guessing_game")` 含恰好一個綁定 `sys.stdout` 的 `StreamHandler`、等級為 `logging.INFO`，連續呼叫兩次仍只有一個 handler（測試結束需移除該 handler 並還原等級）；以注入固定 `RecordingRandom`（`randint` 回傳 50）的 engine 與輸入腳本 `["50", "n"]` 呼叫 `run()` 時，`caplog` 中「新局開始」恰好出現一次且為 INFO 等級（FR-017）；此腳本在 US1 階段不會被消耗，US2 起消耗 `"50"`，US4 起消耗 `"n"`，因此在各階段皆有效
+- [X] T008 [P] [US1] 在 `tests/unit/test_engine.py` 撰寫開局測試：定義測試用 `RecordingRandom(random.Random)`，覆寫 `randint` 以記錄參數並回傳固定值；斷言建構 `GameEngine(rng)` 時 `randint` 以 `(1, 100)` 被呼叫恰好一次；`MIN_NUMBER == 1`、`MAX_NUMBER == 100`；初始 `attempts == 0`、`is_finished is False`；呼叫 `start_new_round()` 後 `randint` 再次以 `(1, 100)` 被呼叫、`attempts == 0`、`is_finished is False`；未提供 `rng` 時可正常建構（FR-001、SC-002）
+- [X] T009 [P] [US1] 在 `tests/integration/test_cli_flow.py` 撰寫 US1 測試：`configure_logging()` 後 `logging.getLogger("guessing_game")` 含恰好一個綁定 `sys.stdout` 的 `StreamHandler`、等級為 `logging.INFO`，連續呼叫兩次仍只有一個 handler（測試結束需移除該 handler 並還原等級）；以注入固定 `RecordingRandom`（`randint` 回傳 50）的 engine 與輸入腳本 `["50", "n"]` 呼叫 `run()` 時，`caplog` 中「新局開始」恰好出現一次且為 INFO 等級（FR-017）；此腳本在 US1 階段不會被消耗，US2 起消耗 `"50"`，US4 起消耗 `"n"`，因此在各階段皆有效
 
 ### Implementation for User Story 1
 
-- [ ] T010 [US1] 在 `src/guessing_game/engine.py` 實作 `GameEngine`：類別常數 `MIN_NUMBER = 1`、`MAX_NUMBER = 100`；`__init__(self, rng: random.Random | None = None) -> None`（預設 `random.Random()`，建構時即開始第一局）；`start_new_round()`（以 `rng.randint(MIN_NUMBER, MAX_NUMBER)` 產生私有 `_secret`，`_attempts = 0`，`_finished = False`）；唯讀屬性 `attempts`、`is_finished`；秘密數字 MUST NOT 有任何公開讀取方式（FR-002；依賴 T005、T008）
-- [ ] T011 [US1] 在 `src/guessing_game/cli.py` 新增：`configure_logging() -> None`（設定套件 logger `logging.getLogger("guessing_game")`：等級 `logging.INFO`、`StreamHandler(sys.stdout)`、格式 `"%(levelname)s %(message)s"`；重複呼叫不得產生重複 handler；僅供 `main()` 呼叫）；`run(input_fn: Callable[[str], str] = input, output_fn: Callable[[str], None] = print, engine: GameEngine | None = None) -> int` 骨架：未提供 engine 時建立 `GameEngine()`、以 `logging.getLogger(__name__).info("新局開始")` 記錄後回傳 `0`（主迴圈於 US2 加入）；`main() -> int`（先 `configure_logging()` 再 `return run()`）（依賴 T006、T009、T010）
-- [ ] T012 [US1] 建立 `src/guessing_game/__main__.py`：`raise SystemExit(main())`（匯入 `guessing_game.cli.main`），使 `PYTHONPATH=src python3 -m guessing_game` 可執行（依賴 T011）
+- [X] T010 [US1] 在 `src/guessing_game/engine.py` 實作 `GameEngine`：類別常數 `MIN_NUMBER = 1`、`MAX_NUMBER = 100`；`__init__(self, rng: random.Random | None = None) -> None`（預設 `random.Random()`，建構時即開始第一局）；`start_new_round()`（以 `rng.randint(MIN_NUMBER, MAX_NUMBER)` 產生私有 `_secret`，`_attempts = 0`，`_finished = False`）；唯讀屬性 `attempts`、`is_finished`；秘密數字 MUST NOT 有任何公開讀取方式（FR-002；依賴 T005、T008）
+- [X] T011 [US1] 在 `src/guessing_game/cli.py` 新增：`configure_logging() -> None`（設定套件 logger `logging.getLogger("guessing_game")`：等級 `logging.INFO`、`StreamHandler(sys.stdout)`、格式 `"%(levelname)s %(message)s"`；重複呼叫不得產生重複 handler；僅供 `main()` 呼叫）；`run(input_fn: Callable[[str], str] = input, output_fn: Callable[[str], None] = print, engine: GameEngine | None = None) -> int` 骨架：未提供 engine 時建立 `GameEngine()`、以 `logging.getLogger(__name__).info("新局開始")` 記錄後回傳 `0`（主迴圈於 US2 加入）；`main() -> int`（先 `configure_logging()` 再 `return run()`）（依賴 T006、T009、T010）
+- [X] T012 [US1] 建立 `src/guessing_game/__main__.py`：`raise SystemExit(main())`（匯入 `guessing_game.cli.main`），使 `PYTHONPATH=src python3 -m guessing_game` 可執行（依賴 T011）
 
 **Checkpoint**: US1 可獨立驗證 — engine 開局與日誌初始化皆有測試涵蓋
 
@@ -89,13 +89,13 @@ description: "終端機猜數字遊戲的任務清單"
 
 ### Tests for User Story 2 ⚠️（先寫、須先失敗）
 
-- [ ] T013 [P] [US2] 在 `tests/unit/test_engine.py` 新增 `guess()` 測試（秘密數字固定為 50）：`guess(70)`→`TOO_HIGH`、`guess(30)`→`TOO_LOW`、`guess(50)`→`CORRECT` 且 `is_finished is True`；每次有效猜測 `attempts` 加 1；答對後再次 `guess()` 拋 `RuntimeError` 且狀態不變；答對後 `start_new_round()` 使 `attempts == 0`、`is_finished is False`；以 `random.Random(seed)` 對至少 100 個不同種子，用二分搜尋找出秘密數字，斷言皆能在 1–100 內答對（SC-002）；對 1 到 100 每個秘密數字以二分搜尋策略模擬遊玩，斷言皆在 7 次有效猜測內答對（SC-006）
-- [ ] T014 [P] [US2] 在 `tests/integration/test_cli_flow.py` 新增 US2 測試：以固定秘密數字 50 的 engine 與腳本化 `input_fn`／`output_fn` 呼叫 `run()`，輸入序列 `["70", "30", "50", "n"]`（結尾的 `"n"` 在 US2 階段不會被消耗，US4 起用於回應「是否再玩」），斷言輸出依序含 `太大`、`太小`、`答對`；答對後 `engine.is_finished is True`；`input_fn` 收到的提示字串為 `請輸入猜測（1-100）：`（FR-003～FR-006）；另斷言除最後的 `答對` 訊息外，答對前所有 `output_fn` 輸出皆不含秘密數字 `"50"`（FR-002）
+- [X] T013 [P] [US2] 在 `tests/unit/test_engine.py` 新增 `guess()` 測試（秘密數字固定為 50）：`guess(70)`→`TOO_HIGH`、`guess(30)`→`TOO_LOW`、`guess(50)`→`CORRECT` 且 `is_finished is True`；每次有效猜測 `attempts` 加 1；答對後再次 `guess()` 拋 `RuntimeError` 且狀態不變；答對後 `start_new_round()` 使 `attempts == 0`、`is_finished is False`；以 `random.Random(seed)` 對至少 100 個不同種子，用二分搜尋找出秘密數字，斷言皆能在 1–100 內答對（SC-002）；對 1 到 100 每個秘密數字以二分搜尋策略模擬遊玩，斷言皆在 7 次有效猜測內答對（SC-006）
+- [X] T014 [P] [US2] 在 `tests/integration/test_cli_flow.py` 新增 US2 測試：以固定秘密數字 50 的 engine 與腳本化 `input_fn`／`output_fn` 呼叫 `run()`，輸入序列 `["70", "30", "50", "n"]`（結尾的 `"n"` 在 US2 階段不會被消耗，US4 起用於回應「是否再玩」），斷言輸出依序含 `太大`、`太小`、`答對`；答對後 `engine.is_finished is True`；`input_fn` 收到的提示字串為 `請輸入猜測（1-100）：`（FR-003～FR-006）；另斷言除最後的 `答對` 訊息外，答對前所有 `output_fn` 輸出皆不含秘密數字 `"50"`（FR-002）
 
 ### Implementation for User Story 2
 
-- [ ] T015 [US2] 在 `src/guessing_game/engine.py` 實作 `GameEngine.guess(self, value: int) -> GuessResult`：本局已結束→拋 `RuntimeError` 且狀態不變；`value > _secret`→`_attempts += 1` 並回傳 `TOO_HIGH`；`value < _secret`→`_attempts += 1` 並回傳 `TOO_LOW`；`value == _secret`→`_attempts += 1`、`_finished = True` 並回傳 `CORRECT`（範圍檢查於 US3 加入；依賴 T010、T013）
-- [ ] T016 [US2] 在 `src/guessing_game/cli.py` 的 `run()` 加入猜測迴圈：以 `input_fn("請輸入猜測（1-100）：")` 讀取，經 `parse_guess` 取得整數後呼叫 `engine.guess()`，依結果以 `output_fn` 輸出 `太大`／`太小`／`答對`；答對即離開迴圈並回傳 `0`；`parse_guess` 回傳 `None` 時，暫時直接重新提示、不呼叫 `engine.guess()`（錯誤訊息與範圍外處理於 US3 加入，此階段範圍外的數字仍會被 engine 計次）（依賴 T011、T014、T015）
+- [X] T015 [US2] 在 `src/guessing_game/engine.py` 實作 `GameEngine.guess(self, value: int) -> GuessResult`：本局已結束→拋 `RuntimeError` 且狀態不變；`value > _secret`→`_attempts += 1` 並回傳 `TOO_HIGH`；`value < _secret`→`_attempts += 1` 並回傳 `TOO_LOW`；`value == _secret`→`_attempts += 1`、`_finished = True` 並回傳 `CORRECT`（範圍檢查於 US3 加入；依賴 T010、T013）
+- [X] T016 [US2] 在 `src/guessing_game/cli.py` 的 `run()` 加入猜測迴圈：以 `input_fn("請輸入猜測（1-100）：")` 讀取，經 `parse_guess` 取得整數後呼叫 `engine.guess()`，依結果以 `output_fn` 輸出 `太大`／`太小`／`答對`；答對即離開迴圈並回傳 `0`；`parse_guess` 回傳 `None` 時，暫時直接重新提示、不呼叫 `engine.guess()`（錯誤訊息與範圍外處理於 US3 加入，此階段範圍外的數字仍會被 engine 計次）（依賴 T011、T014、T015）
 
 **Checkpoint**: US1 + US2 皆可獨立運作 — MVP 可玩
 
@@ -109,13 +109,13 @@ description: "終端機猜數字遊戲的任務清單"
 
 ### Tests for User Story 3 ⚠️（先寫、須先失敗）
 
-- [ ] T017 [P] [US3] 在 `tests/unit/test_engine.py` 新增範圍測試：`is_valid_guess(1)`、`is_valid_guess(100)` 為 `True`；`is_valid_guess(0)`、`is_valid_guess(101)`、`is_valid_guess(-5)` 為 `False`；`guess(0)`、`guess(101)`、`guess(-5)` 拋 `ValueError`，且 `attempts`、`is_finished` 皆不變；邊界值 1 與 100 為有效猜測（FR-008、FR-009）
-- [ ] T018 [P] [US3] 在 `tests/integration/test_cli_flow.py` 新增 US3 測試：固定秘密數字 50，輸入序列 `["abc", "3.5", "+5", "007", "", "0", "101", "-5", " 42 ", "50", "n"]`（結尾的 `"n"` 在 US3 階段不會被消耗，US4 起用於回應「是否再玩」）；斷言格式無效者（前五項）輸出 `輸入無效：請輸入 1 到 100 的整數。`，範圍外者（`0`、`101`、`-5`）輸出 `輸入無效：數字必須介於 1 到 100 之間。`；每次錯誤後重新提示；最終 `engine.attempts == 2`（僅 `" 42 "` 與 `"50"` 計次，FR-009、FR-015）；另斷言答對前所有 `output_fn` 輸出皆不含秘密數字 `"50"`（錯誤訊息只含「1」、「100」，FR-002）
+- [X] T017 [P] [US3] 在 `tests/unit/test_engine.py` 新增範圍測試：`is_valid_guess(1)`、`is_valid_guess(100)` 為 `True`；`is_valid_guess(0)`、`is_valid_guess(101)`、`is_valid_guess(-5)` 為 `False`；`guess(0)`、`guess(101)`、`guess(-5)` 拋 `ValueError`，且 `attempts`、`is_finished` 皆不變；邊界值 1 與 100 為有效猜測（FR-008、FR-009）
+- [X] T018 [P] [US3] 在 `tests/integration/test_cli_flow.py` 新增 US3 測試：固定秘密數字 50，輸入序列 `["abc", "3.5", "+5", "007", "", "0", "101", "-5", " 42 ", "50", "n"]`（結尾的 `"n"` 在 US3 階段不會被消耗，US4 起用於回應「是否再玩」）；斷言格式無效者（前五項）輸出 `輸入無效：請輸入 1 到 100 的整數。`，範圍外者（`0`、`101`、`-5`）輸出 `輸入無效：數字必須介於 1 到 100 之間。`；每次錯誤後重新提示；最終 `engine.attempts == 2`（僅 `" 42 "` 與 `"50"` 計次，FR-009、FR-015）；另斷言答對前所有 `output_fn` 輸出皆不含秘密數字 `"50"`（錯誤訊息只含「1」、「100」，FR-002）
 
 ### Implementation for User Story 3
 
-- [ ] T019 [US3] 在 `src/guessing_game/engine.py` 新增 `is_valid_guess(self, value: int) -> bool`（`MIN_NUMBER <= value <= MAX_NUMBER`），並讓 `guess()` 在範圍外時於任何狀態變更之前拋 `ValueError`（檢查順序：先範圍、再是否已結束，兩者皆不得改變狀態；依賴 T015、T017）
-- [ ] T020 [US3] 在 `src/guessing_game/cli.py` 的 `run()` 猜測迴圈處理無效輸入：`parse_guess` 回傳 `None`→輸出 `輸入無效：請輸入 1 到 100 的整數。`；`engine.is_valid_guess()` 為 `False`→輸出 `輸入無效：數字必須介於 1 到 100 之間。`；兩者皆不呼叫 `engine.guess()`、不計次，並重新提示（依賴 T016、T018、T019）
+- [X] T019 [US3] 在 `src/guessing_game/engine.py` 新增 `is_valid_guess(self, value: int) -> bool`（`MIN_NUMBER <= value <= MAX_NUMBER`），並讓 `guess()` 在範圍外時於任何狀態變更之前拋 `ValueError`（檢查順序：先範圍、再是否已結束，兩者皆不得改變狀態；依賴 T015、T017）
+- [X] T020 [US3] 在 `src/guessing_game/cli.py` 的 `run()` 猜測迴圈處理無效輸入：`parse_guess` 回傳 `None`→輸出 `輸入無效：請輸入 1 到 100 的整數。`；`engine.is_valid_guess()` 為 `False`→輸出 `輸入無效：數字必須介於 1 到 100 之間。`；兩者皆不呼叫 `engine.guess()`、不計次，並重新提示（依賴 T016、T018、T019）
 
 **Checkpoint**: US1–US3 皆可獨立運作
 
@@ -129,7 +129,7 @@ description: "終端機猜數字遊戲的任務清單"
 
 ### Tests for User Story 4 ⚠️（先寫、須先失敗）
 
-- [ ] T021 [P] [US4] 在 `tests/integration/test_cli_flow.py` 新增 US4 測試（使用依序回傳固定值的 `SequenceRandom(random.Random)` 讓兩局秘密數字為 50 與 20）：
+- [X] T021 [P] [US4] 在 `tests/integration/test_cli_flow.py` 新增 US4 測試（使用依序回傳固定值的 `SequenceRandom(random.Random)` 讓兩局秘密數字為 50 與 20）：
   - 答對後輸出 `答對！你總共猜了 3 次。`（例：輸入 `["70", "30", "50"]`），且 `input_fn` 收到提示 `再玩一局？按 Enter 再玩，輸入 n 離開：`（FR-010、FR-011）
   - 再玩輸入 `""` → 開始新局、`engine.attempts == 0`、秘密數字重新產生，`caplog` 出現第二次 `新局開始`（FR-012）
   - 輸入 `"n"` 與 `"N"`（分別各一個測試）→ 輸出 `再見！`、回傳 `0`、日誌含 `玩家離開（原因：n）`（FR-013）
@@ -138,7 +138,7 @@ description: "終端機猜數字遊戲的任務清單"
 
 ### Implementation for User Story 4
 
-- [ ] T022 [US4] 在 `src/guessing_game/cli.py` 的 `run()` 擴充：答對後輸出 `答對！你總共猜了 {engine.attempts} 次。`（取代 US2 僅輸出 `答對` 的行為，仍須含「答對」二字）並記錄 `本局結束，總猜測次數：{attempts}`；以 `input_fn("再玩一局？按 Enter 再玩，輸入 n 離開：")` 詢問並交給 `parse_play_again`：`REPLAY`→`engine.start_new_round()`、記錄 `新局開始`、回到猜測迴圈；`QUIT`→輸出 `再見！`、記錄 `玩家離開（原因：n）`、回傳 `0`；`UNKNOWN`→輸出 `請按 Enter 再玩，或輸入 n 離開。` 並重新詢問；首局開局的 `新局開始` 記錄維持於 US1 的位置（依賴 T020、T021）
+- [X] T022 [US4] 在 `src/guessing_game/cli.py` 的 `run()` 擴充：答對後輸出 `答對！你總共猜了 {engine.attempts} 次。`（取代 US2 僅輸出 `答對` 的行為，仍須含「答對」二字）並記錄 `本局結束，總猜測次數：{attempts}`；以 `input_fn("再玩一局？按 Enter 再玩，輸入 n 離開：")` 詢問並交給 `parse_play_again`：`REPLAY`→`engine.start_new_round()`、記錄 `新局開始`、回到猜測迴圈；`QUIT`→輸出 `再見！`、記錄 `玩家離開（原因：n）`、回傳 `0`；`UNKNOWN`→輸出 `請按 Enter 再玩，或輸入 n 離開。` 並重新詢問；首局開局的 `新局開始` 記錄維持於 US1 的位置（依賴 T020、T021）
 
 **Checkpoint**: 四個 User Story 皆完整運作
 
@@ -148,13 +148,13 @@ description: "終端機猜數字遊戲的任務清單"
 
 **Purpose**: 跨 Story 的需求（中斷處理、日誌限制、風格檢查）與最終驗證
 
-- [ ] T023 [P] 在 `tests/integration/test_cli_flow.py` 撰寫中斷測試（先寫、須先失敗）：以會拋出 `KeyboardInterrupt` 或 `EOFError` 的 `input_fn`，分別在「猜測階段」與「是否再玩階段」各測一次，共 4 個情境；斷言：`run()` 回傳 `0`、不向外傳播例外、`output_fn` 收到 `已離開遊戲，再見！`（此訊息之前先輸出一個換行）、日誌含 `玩家離開（原因：Ctrl+C）` 或 `玩家離開（原因：輸入結束）`（FR-014、SC-005）
-- [ ] T024 在 `src/guessing_game/cli.py` 以單一 `try/except (KeyboardInterrupt, EOFError)` 包住 `run()` 的整個遊戲迴圈：捕捉後輸出換行與 `已離開遊戲，再見！`、依例外類型記錄 `玩家離開（原因：Ctrl+C）` 或 `玩家離開（原因：輸入結束）`、回傳 `0`；不得顯示堆疊追蹤（research D6；依賴 T022、T023）
-- [ ] T025 在 `tests/integration/test_cli_flow.py` 新增日誌限制測試：以固定秘密數字 73 完整跑一局（含無效輸入、答對、再玩、`n` 離開），收集 `caplog` 所有訊息，斷言：每則皆為 INFO；訊息集合僅屬「新局開始」、「本局結束，總猜測次數：N」、「玩家離開（原因：…）」三類；任何日誌訊息皆不含秘密數字 `73`，也不含任何猜測輸入內容（FR-002、FR-017；依賴 T024）
-- [ ] T026 [P] 在 `tests/unit/test_style.py` 以 `ast` 掃描 `src/` 與 `tests/` 下所有 `.py` 檔中的每個函式與方法（含測試函式），斷言皆有 docstring、所有參數（`self`／`cls` 除外）與回傳值皆有型別註記（憲章原則 II）
-- [ ] T027 執行 `python3 -m pytest` 並修正所有失敗，直到全數通過；此步驟同時驗證 T007（架構規則）與 T026（風格規則）
-- [ ] T028 依 `specs/001-number-guessing-game/quickstart.md` 執行手動驗證情境 1–13 與結束碼範例（`printf '\n' | PYTHONPATH=src python3 -m guessing_game; echo "exit=$?"`），記錄任何與規格不符之處並回頭修正
-- [ ] T029 人工對照 Google Python Style Guide 審查 `src/guessing_game/` 與 `tests/` 的所有檔案並修正缺失：命名（函式與變數 `snake_case`、類別 `PascalCase`、常數 `UPPER_SNAKE_CASE`）、單行長度不超過 80 字元、import 分組與排序（標準函式庫→第三方→本專案）、docstring 使用 `Args:`／`Returns:`／`Raises:` 區塊；此項無法以標準函式庫自動檢查，故為人工審查（憲章原則 II）
+- [X] T023 [P] 在 `tests/integration/test_cli_flow.py` 撰寫中斷測試（先寫、須先失敗）：以會拋出 `KeyboardInterrupt` 或 `EOFError` 的 `input_fn`，分別在「猜測階段」與「是否再玩階段」各測一次，共 4 個情境；斷言：`run()` 回傳 `0`、不向外傳播例外、`output_fn` 收到 `已離開遊戲，再見！`（此訊息之前先輸出一個換行）、日誌含 `玩家離開（原因：Ctrl+C）` 或 `玩家離開（原因：輸入結束）`（FR-014、SC-005）
+- [X] T024 在 `src/guessing_game/cli.py` 以單一 `try/except (KeyboardInterrupt, EOFError)` 包住 `run()` 的整個遊戲迴圈：捕捉後輸出換行與 `已離開遊戲，再見！`、依例外類型記錄 `玩家離開（原因：Ctrl+C）` 或 `玩家離開（原因：輸入結束）`、回傳 `0`；不得顯示堆疊追蹤（research D6；依賴 T022、T023）
+- [X] T025 在 `tests/integration/test_cli_flow.py` 新增日誌限制測試：以固定秘密數字 73 完整跑一局（含無效輸入、答對、再玩、`n` 離開），收集 `caplog` 所有訊息，斷言：每則皆為 INFO；訊息集合僅屬「新局開始」、「本局結束，總猜測次數：N」、「玩家離開（原因：…）」三類；任何日誌訊息皆不含秘密數字 `73`，也不含任何猜測輸入內容（FR-002、FR-017；依賴 T024）
+- [X] T026 [P] 在 `tests/unit/test_style.py` 以 `ast` 掃描 `src/` 與 `tests/` 下所有 `.py` 檔中的每個函式與方法（含測試函式），斷言皆有 docstring、所有參數（`self`／`cls` 除外）與回傳值皆有型別註記（憲章原則 II）
+- [X] T027 執行 `python3 -m pytest` 並修正所有失敗，直到全數通過；此步驟同時驗證 T007（架構規則）與 T026（風格規則）
+- [X] T028 依 `specs/001-number-guessing-game/quickstart.md` 執行手動驗證情境 1–13 與結束碼範例（`printf '\n' | PYTHONPATH=src python3 -m guessing_game; echo "exit=$?"`），記錄任何與規格不符之處並回頭修正
+- [X] T029 人工對照 Google Python Style Guide 審查 `src/guessing_game/` 與 `tests/` 的所有檔案並修正缺失：命名（函式與變數 `snake_case`、類別 `PascalCase`、常數 `UPPER_SNAKE_CASE`）、單行長度不超過 80 字元、import 分組與排序（標準函式庫→第三方→本專案）、docstring 使用 `Args:`／`Returns:`／`Raises:` 區塊；此項無法以標準函式庫自動檢查，故為人工審查（憲章原則 II）
 
 ---
 
