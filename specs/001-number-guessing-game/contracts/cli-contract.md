@@ -49,8 +49,9 @@
 
 ## 日誌（憲章原則 V、FR-017）
 
-- 設定：`logging.basicConfig(level=logging.INFO, stream=sys.stdout, format="%(levelname)s %(message)s")`，
-  僅在 `main()` 內透過 `configure_logging()` 呼叫。
+- 設定：套件 logger `logging.getLogger("guessing_game")`，等級 `logging.INFO`，
+  handler 為 `logging.StreamHandler(sys.stdout)`，格式 `"%(levelname)s %(message)s"`；
+  重複呼叫不得產生重複 handler；僅在 `main()` 內透過 `configure_logging()` 呼叫。
 - 僅記錄下列三類事件，且皆為 INFO 等級：
 
 | 事件 | 時機 | 訊息內容 |

@@ -60,14 +60,19 @@ Technical Context 中沒有 `NEEDS CLARIFICATION`；以下記錄各項設計決�
 
 ## D7. 日誌（對應 FR-017、憲章原則 V）
 
-- **Decision**: CLI 提供 `configure_logging()`，僅由 `main()` 呼叫：
-  `logging.basicConfig(level=logging.INFO, stream=sys.stdout, format="%(levelname)s %(message)s")`。
-  模組以 `logging.getLogger(__name__)` 取得 logger。僅記錄三類事件：
+- **Decision**: CLI 提供 `configure_logging()`，僅由 `main()` 呼叫。它設定套件 logger
+  `logging.getLogger("guessing_game")`：`setLevel(logging.INFO)`；先移除本函式先前加入的 handler
+  （避免重複呼叫時重複輸出），再加入 `logging.StreamHandler(sys.stdout)`，格式
+  `"%(levelname)s %(message)s"`。模組以 `logging.getLogger(__name__)` 取得 logger
+  （即 `guessing_game.cli`，繼承套件 logger 的設定）。僅記錄三類事件：
   「新局開始」、「本局結束（含總猜測次數）」、「玩家離開（含原因：輸入 n／Ctrl+C／輸入結束）」。
   GameEngine 不記錄日誌。
 - **Rationale**: 日誌初始化集中於進入點（使用者要求）；`run()` 本身不設定 logging，
   因此整合測試可用 `caplog` 驗證事件而不改動全域設定。事件由 CLI 記錄，使 engine 保持純粹，
-  也不需擔心 engine 洩漏秘密數字到 stdout。
+  也不需擔心 engine 洩漏秘密數字到 stdout。不使用 `logging.basicConfig`：它在根 logger 已有
+  handler 時不生效（例如 pytest 的 caplog），會讓測試無法驗證。改設套件 logger 也不會影響其他程式的日誌。
+  注意：未呼叫 `configure_logging()` 時，套件 logger 繼承根 logger 的 WARNING 等級，INFO 訊息不會被記錄，
+  因此使用 `caplog` 的測試須先呼叫 `caplog.set_level(logging.INFO, logger="guessing_game")`。
 - **Alternatives considered**: 由 engine 記錄「新局開始」——engine 會多一個副作用，
   且日誌內容與呈現層（stdout）綁得更緊。
 

@@ -37,7 +37,7 @@
 **Constraints**: 邏輯層不得呼叫 `input()`／`print()`；日誌固定 INFO、輸出至 stdout、僅三類事件、
 不得含秘密數字；Ctrl+C／Ctrl+D 不得出現堆疊追蹤
 
-**Scale/Scope**: 單一玩家、單一程序；約 2 個原始碼模組、1 個進入點、3–4 個測試檔
+**Scale/Scope**: 單一玩家、單一程序；約 2 個原始碼模組、1 個進入點、5 個測試檔
 
 ## Constitution Check
 
@@ -46,7 +46,7 @@
 | 原則 | 檢查結果 | 依據 |
 |------|----------|------|
 | I. Python 3.11+、僅標準函式庫、pytest | ✅ 通過 | 執行期僅用 `random`、`logging`、`re`、`enum`、`sys`；不引入任何套件；`pyproject.toml` 只放 pytest 設定，不含 `[project]` 相依 |
-| II. Google Style、type hints、docstring | ✅ 通過 | 所有函式與方法（含測試函式、測試輔助函式）皆標註型別並附 Google 風格 docstring；測試函式回傳型別為 `-> None` |
+| II. Google Style、type hints、docstring | ✅ 通過 | 所有函式與方法（含測試函式、測試輔助函式）皆標註型別並附 Google 風格 docstring；測試函式回傳型別為 `-> None`；`tests/unit/test_style.py` 以 AST 自動檢查 docstring 與型別註記，其餘 Google Style 項目（命名、行寬、import 順序）以 tasks.md 的 T029 人工審查 |
 | III. 邏輯與 I/O 分離 | ✅ 通過 | `engine.py` 不含 `input()`／`print()`，也不匯入 `cli`；I/O 全在 `cli.py`；`tests/unit/test_architecture.py` 以 AST 自動檢查此規則 |
 | IV. 核心邏輯單元測試 | ✅ 通過 | GameEngine 與 CLI 純函式（`parse_guess`、`parse_play_again`）皆有 pytest 單元測試，涵蓋正常、邊界與錯誤輸入；隨機性以注入 `random.Random` 消除 |
 | V. 日誌（logging、INFO、stdout） | ✅ 通過 | 僅在 CLI 進入點呼叫 `configure_logging()`；等級固定 INFO、handler 綁定 `sys.stdout`；僅記錄三類事件 |
@@ -87,7 +87,8 @@ tests/
 ├── unit/
 │   ├── test_engine.py       # GameEngine 行為（注入固定 Random；無任何終端機 I/O）
 │   ├── test_cli_parsing.py  # parse_guess、parse_play_again 純函式
-│   └── test_architecture.py # AST 檢查：engine.py 無 input/print、無 cli 匯入
+│   ├── test_architecture.py # AST 檢查：engine.py 無 input/print、無 cli 匯入
+│   └── test_style.py        # AST 檢查：src/ 與 tests/ 所有函式皆有 docstring 與完整型別註記
 └── integration/
     └── test_cli_flow.py     # 以注入的 input_fn／output_fn 腳本化驅動 run()，驗證完整流程與日誌
 ```
