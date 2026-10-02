@@ -61,8 +61,8 @@ MUST 在 10 分鐘以內
 - 此 YAML MUST NOT 在本機執行驗證（Azure DevOps 專屬語法，本機無對應執行環境）；
   實作階段 MUST NOT 由 AI 自行 `git push`，驗收需使用者推送後在 Azure DevOps 實際觀察執行結果
 
-**Scale/Scope**: 單一 pipeline 檔 + 單一 Sonar 設定檔；四個循序步驟（checkout、環境建置、pytest、
-SonarQube Cloud 掃描）
+**Scale/Scope**: 單一 pipeline 檔 + 單一 Sonar 設定檔；五個循序步驟（checkout、SonarQube Cloud
+掃描前置設定、環境建置、pytest、SonarQube Cloud 掃描與發布）
 
 ## Constitution Check
 

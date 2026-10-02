@@ -38,8 +38,8 @@
 | 2 | 使用者推送一個 commit 到 `main` 以外的分支（例如 `feature/x`） | 不會有任何 pipeline 執行被觸發 | FR-002 | **本次不執行** |
 | 3 | 使用者對 `main` 開一個 Pull Request | 不會觸發本 pipeline 的分析 | FR-011 | **本次不執行** |
 | 4 | 查看階段 0（原始碼取得）的執行紀錄 | 確認使用 `fetchDepth: 0`，取得完整 git 歷史而非淺層 clone | research.md D2 | 執行 |
-| 5 | 在全部既有測試通過的狀態下推送 commit | 階段 2（單元測試）顯示成功；階段 3（品質掃描）接著執行 | FR-003、AC-02 | 執行 |
-| 6 | 暫時讓某個既有 pytest 測試失敗後推送 commit | Pipeline 於階段 2 標示為失敗；階段 3（品質掃描）未執行 | FR-004、FR-005、AC-02 | **本次不執行** |
+| 5 | 在全部既有測試通過的狀態下推送 commit | 階段 3（單元測試）顯示成功；階段 4（品質掃描與發布）接著執行 | FR-003、AC-02 | 執行 |
+| 6 | 暫時讓某個既有 pytest 測試失敗後推送 commit | Pipeline 於階段 3 標示為失敗；階段 4（品質掃描與發布）未執行 | FR-004、FR-005、AC-02 | **本次不執行** |
 | 7 | 查看步驟 1 或 5 的 pipeline 執行摘要畫面 | 可直接看到 SonarQube Cloud 的 Quality Gate 結果（PASSED／FAILED），不需另外登入 SonarQube Cloud | FR-007、AC-03、SC-003 | 執行 |
 | 8 | 刻意讓本次分析觸發 Quality Gate `FAILED`（例如新增明顯的程式碼異味） | 摘要顯示 `FAILED`，但 pipeline 整體執行結果仍為成功（不因 Quality Gate 失敗而被標示為 Failed） | FR-007a | **本次不執行** |
 | 9 | 於 SonarQube Cloud 專案頁面檢視本次分析涵蓋的檔案範圍 | `.specify/`、`specs/` 底下的檔案未出現在掃描結果中 | 使用者第 6 點、D7 | 執行 |
