@@ -49,7 +49,7 @@ description: "Task list template for feature implementation"
 **⚠️ CRITICAL**: 以下為人工／Azure DevOps 介面設定，不在本次 repo 變更範圍內，但必須在推送驗收前
 備妥，否則即使 YAML 正確也無法觀察到預期行為
 
-- [ ] T002 [P] 確認下列 Azure DevOps／SonarQube Cloud 前置條件已就緒（人工檢查，對應
+- [X] T002 [P] 確認下列 Azure DevOps／SonarQube Cloud 前置條件已就緒（人工檢查，對應
       `specs/002-azure-devops-ci/quickstart.md` 的「前置條件」小節，非程式碼變更）：
       (a) 此 Git 儲存庫已連結一個 Azure DevOps 專案，且已從 `azure-pipelines.yml` 建立 Pipeline；
       (b) 該組織已安裝支援 v4 任務的「SonarQube Cloud」Marketplace 延伸模組；
@@ -57,6 +57,10 @@ description: "Task list template for feature implementation"
       已事先建立（spec.md Assumptions）；
       (d) 已建立型別為「SonarQube Cloud」、名稱為 `sonarcloud-113403522` 的 Service Connection，
       且其中已設定有效 token（**不得** 以任何形式寫入 repo，對應 FR-008）。
+
+      **完成**（使用者於 Azure DevOps／SonarQube Cloud 實際確認，2026-10-02）：
+      SonarQube Cloud 延伸模組、Service Connection `sonarcloud-113403522`、
+      SonarQube Cloud 專案 `john19960810_guess_number_game_113403522` 皆已就緒。
 
 **Checkpoint**：T001、T002 完成後，才能開始驗證任何一個 User Story 的實際行為。
 
@@ -196,10 +200,32 @@ FAILED」本次標註不執行）。
 - [X] T014 檢視本次變更的 `git diff`，確認僅新增／修改 `azure-pipelines.yml`、
       `sonar-project.properties` 兩個檔案，`src/`、`tests/`、`pyproject.toml` 未被觸碰
       （對應 FR-010）。
-- [ ] T015 將以上變更交付使用者本人推送到 `main`（**AI MUST NOT 執行 `git push`**，
+- [X] T015 將以上變更交付使用者本人推送到 `main`（**AI MUST NOT 執行 `git push`**，
       對應 plan.md Constraints、research.md D8）；使用者推送後，依
       `specs/002-azure-devops-ci/quickstart.md`「手動驗證情境」表中標註「執行」的項目
       （#1、#4、#5、#7、#9、#10、#11）在 Azure DevOps 實際觀察驗收結果。
+
+      **驗收結果**（使用者於 Azure DevOps／SonarQube Cloud 實際執行，2026-10-02）：
+
+      - **#1 自動觸發**：run #20261002.2、.3、.4 皆為 Individual CI，push 到 `main` 後
+        無人工介入自動執行，全部成功（FR-001、AC-01、SC-001）。
+      - **#4 fetchDepth**：SonarQube Cloud 的 issue 能顯示作者與日期（git blame 資訊），
+        代表 `fetchDepth: 0` 確實取得完整 git 歷史（research.md D2）。
+      - **#5 測試通過後才執行掃描**：pipeline 各步驟依序成功，`pytest` 通過後才執行
+        `SonarCloudAnalyze@4` 與 `SonarCloudPublish@4`（FR-003～FR-005、AC-02）。
+      - **#7 摘要顯示 Quality Gate**：pipeline 的 Extensions 分頁出現「SonarQube Cloud
+        Analysis Report」，但結果為 **`none`（Not computed）**——**已知問題**，非本功能實作
+        缺陷：原因是 SonarQube Cloud 專案由分析自動建立，缺少 New Code definition，
+        而預設的 Sonar way Quality Gate 條件全部針對「新程式碼」，無新程式碼定義時無法計算，
+        因此顯示 Not computed。修正方式需由 SonarQube Cloud 管理員在該專案設定
+        New Code definition，屬於 repo 外、SonarQube Cloud 專案層級的設定，不在本功能
+        （`azure-pipelines.yml`／`sonar-project.properties`）變更範圍內；已回報給專案管理員
+        （學長）後續處理。FR-007（摘要顯示 Quality Gate 結果）本身的「顯示機制」已驗證運作
+        正常，僅計算結果因外部專案設定而為 `none`。
+      - **#9 排除範圍**：SonarQube Cloud 顯示 144 Lines of Code，語言僅 Python，
+        `.specify/`、`specs/` 未被掃描（使用者第 6 點、research.md D7）。
+      - **#10 耗時**：每次執行約 1 分 10 秒至 1 分 23 秒，遠低於 10 分鐘門檻（SC-004）。
+      - **#11 未修改程式碼**：`src/`、`tests/`、`pyproject.toml` 皆未變動（FR-010）。
 
 ---
 
