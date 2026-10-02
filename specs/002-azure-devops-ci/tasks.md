@@ -35,7 +35,7 @@ description: "Task list template for feature implementation"
 
 **Purpose**: 建立本功能唯一的 pipeline 檔案骨架
 
-- [ ] T001 建立 `azure-pipelines.yml`（儲存庫根目錄）：設定 pipeline 名稱、單一 job、
+- [X] T001 建立 `azure-pipelines.yml`（儲存庫根目錄）：設定 pipeline 名稱、單一 job、
       `pool: vmImage: 'ubuntu-24.04'`（**固定版本號，不得使用 `ubuntu-latest`**，
       理由見 research.md D2：該標籤將於 2026/10/19 改指向 Ubuntu 26）、空的 `steps: []`。
       此為後續所有任務共同編輯的唯一檔案。對應：plan.md Project Structure、research.md D2。
@@ -72,11 +72,11 @@ description: "Task list template for feature implementation"
 
 ### Implementation for User Story 1
 
-- [ ] T003 [US1] 在 `azure-pipelines.yml` 新增頂層 `trigger` 與 `pr` 設定：
+- [X] T003 [US1] 在 `azure-pipelines.yml` 新增頂層 `trigger` 與 `pr` 設定：
       `trigger: branches: include: [main]`、`pr: none`
       （對應 FR-001、FR-002、FR-011、AC-01；research.md D1；
       contracts/azure-pipeline-contract.md 觸發契約）。
-- [ ] T004 [US1] 在 `azure-pipelines.yml` 的 `steps:` 中加入一個最小可觀察步驟（例如
+- [X] T004 [US1] 在 `azure-pipelines.yml` 的 `steps:` 中加入一個最小可觀察步驟（例如
       `- script: echo "CI pipeline triggered"`），取代 T001 的空 `steps: []`，
       使 pipeline 觸發後有實際可見的執行紀錄，供本故事獨立驗證（之後會在 US2、US3 被
       真正的步驟取代／擴充，不需要另外刪除）。
@@ -95,10 +95,10 @@ pipeline 標示成功；（本次驗收範圍不含「刻意讓測試失敗」�
 
 ### Implementation for User Story 2
 
-- [ ] T005 [US2] 在 `azure-pipelines.yml` 中，將 T004 的佔位步驟替換為環境建置步驟：
+- [X] T005 [US2] 在 `azure-pipelines.yml` 中，將 T004 的佔位步驟替換為環境建置步驟：
       加入 `UsePythonVersion@0` 任務，`versionSpec: '3.12'`（與本機 `.venv` 一致，
       對應 plan.md Technical Context、research.md D2）。
-- [ ] T006 [US2] 緊接著 T005，在 `azure-pipelines.yml` 新增一個 script 步驟，依序執行
+- [X] T006 [US2] 緊接著 T005，在 `azure-pipelines.yml` 新增一個 script 步驟，依序執行
       `python -m pip install --upgrade pip pytest` 與 `python -m pytest`
       （專案既有執行方式，依賴既有 `pyproject.toml` 的 `pythonpath=["src"]`、
       `testpaths=["tests"]`；不加任何 `--cov` 參數）。
@@ -121,7 +121,7 @@ Quality Gate 結果（僅資訊呈現，不影響 pipeline 成敗）。
 
 ### Implementation for User Story 3
 
-- [ ] T007 [P] [US3] 建立 `sonar-project.properties`（儲存庫根目錄），內容為：
+- [X] T007 [P] [US3] 建立 `sonar-project.properties`（儲存庫根目錄），內容為：
 
       ```properties
       sonar.projectKey=john19960810_guess_number_game_113403522
@@ -135,11 +135,11 @@ Quality Gate 結果（僅資訊呈現，不影響 pipeline 成敗）。
       MUST NOT 包含任何 token／密碼／其他機密值；MUST NOT 設定任何 coverage 相關欄位
       （對應 FR-006、FR-008、FR-009；data-model.md SonarQube Cloud 掃描設定；
       contracts/sonar-config-contract.md）。與 T001～T006 為不同檔案，可平行進行。
-- [ ] T008 [US3] 在 `azure-pipelines.yml` 的 `steps:` **最前面**（即在 T005 的
+- [X] T008 [US3] 在 `azure-pipelines.yml` 的 `steps:` **最前面**（即在 T005 的
       `UsePythonVersion@0` 之前）插入 `checkout: self`，並設定 `fetchDepth: 0`
       （取得完整 git 歷史，供 SonarQube Cloud 分析使用；對應 research.md D2；
       依賴 T001 已存在的 `steps:` 區塊）。
-- [ ] T009 [US3] 緊接在 T008 的 checkout 之後、T005 的 `UsePythonVersion@0` 之前，
+- [X] T009 [US3] 緊接在 T008 的 checkout 之後、T005 的 `UsePythonVersion@0` 之前，
       新增 `SonarCloudPrepare@4` 任務：
 
       ```yaml
@@ -158,9 +158,9 @@ Quality Gate 結果（僅資訊呈現，不影響 pipeline 成敗）。
       （注意：Prepare 必須排在建置／測試步驟之前是 SonarQube Cloud 任務的既定順序要求，
       此步驟僅寫入掃描設定、尚未執行實際分析，故不違反 FR-005「測試通過後才執行品質掃描」的
       意圖——真正的分析與上傳在 T010、T011。）
-- [ ] T010 [US3] 在 `azure-pipelines.yml` 的 T006 pytest 步驟**之後**，新增
+- [X] T010 [US3] 在 `azure-pipelines.yml` 的 T006 pytest 步驟**之後**，新增
       `SonarCloudAnalyze@4` 任務（不需要任何輸入欄位）。依賴 T006、T009。
-- [ ] T011 [US3] 緊接在 T010 之後，新增 `SonarCloudPublish@4` 任務：
+- [X] T011 [US3] 緊接在 T010 之後，新增 `SonarCloudPublish@4` 任務：
 
       ```yaml
       - task: SonarCloudPublish@4
@@ -185,15 +185,15 @@ FAILED」本次標註不執行）。
 
 **Purpose**: 推送前的本機靜態檢查，以及正式驗收的交接
 
-- [ ] T012 [P] 執行 `specs/002-azure-devops-ci/quickstart.md`「設定檔驗證」小節列出的全部
+- [X] T012 [P] 執行 `specs/002-azure-devops-ci/quickstart.md`「設定檔驗證」小節列出的全部
       `grep` 檢查（觸發設定、`vmImage` 釘選、SonarCloud 任務版本為 `@4`、
       `sonar-project.properties` 無機密關鍵字、`sonar.exclusions` 已排除 spec-kit 目錄），
       確認針對 `azure-pipelines.yml`、`sonar-project.properties` 全數通過。
       **不得** 安裝或使用 PyYAML 等第三方套件做 YAML 語法驗證（違反憲章原則 I）。
-- [ ] T013 [P] 執行 `.venv/bin/python -m pytest`，確認既有全部測試（`tests/unit`、
+- [X] T013 [P] 執行 `.venv/bin/python -m pytest`，確認既有全部測試（`tests/unit`、
       `tests/integration`）維持原本通過狀態（對應 Constitution Check 原則 IV 未被破壞；
       quickstart.md「既有測試仍需通過」）。
-- [ ] T014 檢視本次變更的 `git diff`，確認僅新增／修改 `azure-pipelines.yml`、
+- [X] T014 檢視本次變更的 `git diff`，確認僅新增／修改 `azure-pipelines.yml`、
       `sonar-project.properties` 兩個檔案，`src/`、`tests/`、`pyproject.toml` 未被觸碰
       （對應 FR-010）。
 - [ ] T015 將以上變更交付使用者本人推送到 `main`（**AI MUST NOT 執行 `git push`**，
