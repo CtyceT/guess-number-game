@@ -34,7 +34,7 @@ spec.md 與 plan.md 皆未要求新增 pytest 測試；每個使用者故事以�
 
 **Purpose**: 三個使用者故事共用的最小前置設定
 
-- [ ] T001 [P] 在 `.gitignore` 新增三行：`test-results.xml`、`coverage.xml`、
+- [X] T001 [P] 在 `.gitignore` 新增三行：`test-results.xml`、`coverage.xml`、
   `benchmark_summary.md`，確保 US1／US2／US3 各自產生的 CI 報告檔永不被提交進版本控制
   （對應 `plan.md` Project Structure 的 `.gitignore` 異動項）。
 
@@ -66,20 +66,20 @@ Tests 分頁是否顯示逐案例通過/失敗與整體成功率；再推送一�
 
 ### Implementation for User Story 1
 
-- [ ] T002 [US1] 修改 `azure-pipelines.yml` 中既有的
+- [X] T002 [US1] 修改 `azure-pipelines.yml` 中既有的
   `displayName: 'Install pytest and run existing test suite'` 步驟，將
   `python -m pytest` 改為 `python -m pytest --junitxml=test-results.xml`（`pip install`
   那一行此階段先維持 `python -m pip install --upgrade pip pytest` 不變，`pytest-cov` 由
   US2 加入），並將 `displayName` 更新為 `'Run test suite with JUnit results'`
   （對應 `contracts/pipeline-steps.md` §1 的中繼狀態；最終文字由 T005 補上
   `pytest-cov`）。
-- [ ] T003 [US1] 在 `azure-pipelines.yml` 中，於 T002 修改的步驟之後、`SonarCloudAnalyze@4`
+- [X] T003 [US1] 在 `azure-pipelines.yml` 中，於 T002 修改的步驟之後、`SonarCloudAnalyze@4`
   之前，新增一個 `PublishTestResults@2` 步驟：`condition: succeededOrFailed()`（測試失敗時
   仍要發布，讓開發者看到哪些測試失敗），`testResultsFormat: 'JUnit'`，
   `testResultsFiles: 'test-results.xml'`，`testRunTitle: '猜數字遊戲 pytest 結果'`，
   `failTaskOnMissingResultsFile: true`（完全找不到結果檔時這個任務本身也標示失敗，呼應
   FR-013）（對應 `contracts/pipeline-steps.md` §2 第一個任務）。
-- [ ] T004 [US1] 依 `specs/003-ci-test-quality-perf/quickstart.md` 的「1. 測試成功率 +
+- [X] T004 [US1] 依 `specs/003-ci-test-quality-perf/quickstart.md` 的「1. 測試成功率 +
   覆蓋率報告」本機驗證步驟，執行
   `python -m pytest --junitxml=test-results.xml`，確認 repo 根目錄產生格式正確的 JUnit
   `test-results.xml`；完成後可將該檔刪除或留給 T001 的 `.gitignore` 忽略。
@@ -98,26 +98,26 @@ Tests 分頁是否顯示逐案例通過/失敗與整體成功率；再推送一�
 
 ### Implementation for User Story 2
 
-- [ ] T005 [US2] 修改 `azure-pipelines.yml` 中 T002 的同一個步驟：`pip install` 那一行改為
+- [X] T005 [US2] 修改 `azure-pipelines.yml` 中 T002 的同一個步驟：`pip install` 那一行改為
   `python -m pip install --upgrade pip pytest pytest-cov`；`pytest` 指令延伸為
   `python -m pytest --junitxml=test-results.xml --cov=src --cov-report=xml`；
   `displayName` 更新為 `'Install pytest/pytest-cov and run test suite with coverage'`
   （對應 `contracts/pipeline-steps.md` §1 最終狀態）。
-- [ ] T006 [US2] 在 `azure-pipelines.yml` 中，於 T003 新增的 `PublishTestResults@2` 步驟
+- [X] T006 [US2] 在 `azure-pipelines.yml` 中，於 T003 新增的 `PublishTestResults@2` 步驟
   之後、`SonarCloudAnalyze@4` 之前，新增一個 `PublishCodeCoverageResults@2` 步驟：**不設定**
   `condition`（沿用預設的 `succeeded()`，測試步驟失敗時這個任務不執行、覆蓋率不會被發布，
   對應 spec.md 的 Edge Case 與 SC-002「100% 的 pipeline 成功執行」），
   `summaryFileLocation: 'coverage.xml'`，`pathToSources: 'src'`，
   `failIfCoverageEmpty: true`（覆蓋率報告為空或遺失時這個任務自己標示失敗，呼應
   FR-013）（對應 `contracts/pipeline-steps.md` §2 第二個任務）。
-- [ ] T007 [P] [US2] 在 `sonar-project.properties` 檔尾新增一行
+- [X] T007 [P] [US2] 在 `sonar-project.properties` 檔尾新增一行
   `sonar.python.coverage.reportPaths=coverage.xml`，其餘內容不變，讓既有的
   `SonarCloudAnalyze@4` 步驟讀到 `coverage.xml`（對應 `contracts/pipeline-steps.md` §3，
   以及 FR-006 對 spec 002 FR-009 的取代）。
-- [ ] T008 [US2] 確認 `sonar-project.properties`（T007 修改後）未殘留任何覆蓋率排除設定
+- [X] T008 [US2] 確認 `sonar-project.properties`（T007 修改後）未殘留任何覆蓋率排除設定
   （目前檔案本就沒有 `sonar.coverage.exclusions` 之類設定，僅需覆核一次，確保 FR-006
   的取代規則沒有被既有設定抵銷）。
-- [ ] T009 [US2] 依 `quickstart.md` 的「1. 測試成功率 + 覆蓋率報告」本機驗證步驟，執行
+- [X] T009 [US2] 依 `quickstart.md` 的「1. 測試成功率 + 覆蓋率報告」本機驗證步驟，執行
   `python -m pytest --junitxml=test-results.xml --cov=src --cov-report=xml`，確認
   `coverage.xml` 產生且為 Cobertura 格式（可用文字編輯器確認根元素為
   `<coverage ...>` 並含 `line-rate` 屬性）。
@@ -139,7 +139,7 @@ SonarQube Cloud 亦顯示覆蓋率。
 
 ### Implementation for User Story 3
 
-- [ ] T010 [P] [US3] 建立 `benchmarks/bench_driver.py`：依 `research.md` D5 設計，使用固定
+- [X] T010 [P] [US3] 建立 `benchmarks/bench_driver.py`：依 `research.md` D5 設計，使用固定
   種子 `SEED = 20261009`——
   (a) 先用固定種子 `SEED` 建立一個只在本函式內使用的「影子」
   `GameEngine(rng=random.Random(SEED))`，以二分搜尋演算法（`low=GameEngine.MIN_NUMBER`、
@@ -152,7 +152,7 @@ SonarQube Cloud 亦顯示覆蓋率。
   完成一局；(c) 回傳／以該呼叫的結果作為本模組（獨立執行時）的結束碼。模組只能匯入
   `guessing_game.engine`、`guessing_game.cli` 與標準函式庫，MUST NOT 修改 `src/` 下任何
   檔案。
-- [ ] T011 [P] [US3] 建立 `benchmarks/measure_once.py`：以 `subprocess.run([sys.executable,
+- [X] T011 [P] [US3] 建立 `benchmarks/measure_once.py`：以 `subprocess.run([sys.executable,
   "benchmarks/bench_driver.py"], ...)` 執行恰好一次 `bench_driver.py`（其唯一子行程），
   在呼叫前後以 `time.perf_counter()` 量測 `response_time_s`；呼叫後立即以
   `resource.getrusage(resource.RUSAGE_CHILDREN)` 取得 `cpu_time_s`（`ru_utime+ru_stime`）
@@ -160,7 +160,7 @@ SonarQube Cloud 亦顯示覆蓋率。
   一行 JSON 至 stdout（成功時 `ok: true, error: null`；`bench_driver.py` 結束碼非 0 時，
   印出 `ok: false` 與簡短 `error` 訊息，三個數值欄位為 `null`）；`measure_once.py` 本身
   MUST 永遠以結束碼 0 結束（不得把子行程的失敗往上傳播為自己的非零結束碼）。
-- [ ] T012 [US3] 建立 `benchmarks/run_benchmarks.py`：以全新 Python 行程重複呼叫
+- [X] T012 [US3] 建立 `benchmarks/run_benchmarks.py`：以全新 Python 行程重複呼叫
   `benchmarks/measure_once.py` 10 次（每次都是獨立 `subprocess.run()`），逐行解析
   `contracts/benchmark-ipc.md` 定義的 JSON（解析失敗或行程結束碼非 0 視同該筆樣本
   `ok=false`，記錄錯誤訊息，不中止其餘樣本的量測）；依 `data-model.md` 的驗證規則，平均值
@@ -168,20 +168,20 @@ SonarQube Cloud 亦顯示覆蓋率。
   若全部 10 筆皆失敗，平均值欄位 MUST 為 `null`（不得以 0 代表結果良好）；將 `sample_count`
   （固定 10）、`ok_count`、三個平均值與逐筆樣本寫成 Markdown 表格，存至 repo 根目錄的
   `benchmark_summary.md`。依賴 T010、T011。
-- [ ] T013 [US3] 在 `benchmarks/run_benchmarks.py` 寫出 `benchmark_summary.md` 之後，印出
+- [X] T013 [US3] 在 `benchmarks/run_benchmarks.py` 寫出 `benchmark_summary.md` 之後，印出
   `##vso[task.uploadsummary]<benchmark_summary.md 的絕對路徑>` 作為腳本的最後一步標準輸出
   （對應 `research.md` D7），並確保整個 `run_benchmarks.py`（含上游 T012 的彙總邏輯）
   無論樣本成功與否 MUST 永遠以結束碼 0 結束。依賴 T012。
-- [ ] T014 [US3] 在 `azure-pipelines.yml` 的 `SonarCloudPublish@4` 步驟之後新增一個步驟：
+- [X] T014 [US3] 在 `azure-pipelines.yml` 的 `SonarCloudPublish@4` 步驟之後新增一個步驟：
   `script: python benchmarks/run_benchmarks.py`，
   `displayName: 'Run guessing game performance benchmark (10 runs, stdlib only)'`，
   `continueOnError: true`（對應 `contracts/pipeline-steps.md` §4，落實 FR-010／FR-015）。
   依賴 T012、T013。
-- [ ] T015 [US3] 為 `benchmarks/bench_driver.py`、`benchmarks/measure_once.py`、
+- [X] T015 [US3] 為 `benchmarks/bench_driver.py`、`benchmarks/measure_once.py`、
   `benchmarks/run_benchmarks.py` 內的每個函式補上完整的 type hints（參數與回傳值）與
   Google 風格 docstring（至少說明用途，適用時含 `Args:`／`Returns:`／`Raises:`），符合
   專案憲章原則 II。依賴 T010、T011、T012。
-- [ ] T016 [US3] 依 `quickstart.md` 的「2. 效能量測腳本」與「3. 確認未修改 src/」本機驗證：
+- [X] T016 [US3] 依 `quickstart.md` 的「2. 效能量測腳本」與「3. 確認未修改 src/」本機驗證：
   (a) 連續執行兩次 `python benchmarks/run_benchmarks.py`，確認兩次的平均 CPU 時間／回應
   時間相近，記憶體峰值未出現被先前執行污染的異常模式；(b) 暫時讓 `bench_driver.py` 的
   二分搜尋故意失敗一次（例如暫時改一個會拋例外的分支，驗證完還原），確認
@@ -197,14 +197,14 @@ SonarQube Cloud 亦顯示覆蓋率。
 
 **Purpose**: 跨三個使用者故事的最終確認
 
-- [ ] T017 [P] 比對 `azure-pipelines.yml` 完成後的步驟順序與
+- [X] T017 [P] 比對 `azure-pipelines.yml` 完成後的步驟順序與
   `specs/003-ci-test-quality-perf/contracts/pipeline-steps.md` 的目標狀態是否一致：
   `checkout` → `SonarCloudPrepare@4` → `UsePythonVersion@0` → pytest 步驟（T005）→
   `PublishTestResults@2`（T003）→ `PublishCodeCoverageResults@2`（T006）→
   `SonarCloudAnalyze@4` → `SonarCloudPublish@4` → 效能量測步驟（T014）；並確認
   `trigger.branches.include` 仍只有 `main`、`pr: none` 未被改動（FR-001），逐行比對這兩個
   區塊與修改前的 `azure-pipelines.yml`。
-- [ ] T018 依 `specs/003-ci-test-quality-perf/quickstart.md` 完整跑一次本機驗證（US1、
+- [X] T018 依 `specs/003-ci-test-quality-perf/quickstart.md` 完整跑一次本機驗證（US1、
   US2、US3 全部步驟），並再次執行 `git status --short src/` 確認輸出為空、檢查本次異動的
   所有檔案（`azure-pipelines.yml`、`sonar-project.properties`、`.gitignore`、
   `benchmarks/*.py`）內未出現任何密碼或 token 字面值（對應 FR-012）。依賴 T001–T016。

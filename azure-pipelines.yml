@@ -26,12 +26,31 @@ steps:
       versionSpec: '3.12'
 
   - script: |
-      python -m pip install --upgrade pip pytest
-      python -m pytest
-    displayName: 'Install pytest and run existing test suite'
+      python -m pip install --upgrade pip pytest pytest-cov
+      python -m pytest --junitxml=test-results.xml --cov=src --cov-report=xml
+    displayName: 'Install pytest/pytest-cov and run test suite with coverage'
+
+  - task: PublishTestResults@2
+    condition: succeededOrFailed()
+    inputs:
+      testResultsFormat: 'JUnit'
+      testResultsFiles: 'test-results.xml'
+      testRunTitle: '猜數字遊戲 pytest 結果'
+      failTaskOnMissingResultsFile: true
+
+  - task: PublishCodeCoverageResults@2
+    inputs:
+      summaryFileLocation: 'coverage.xml'
+      pathToSources: 'src'
+      failIfCoverageEmpty: true
 
   - task: SonarCloudAnalyze@4
 
   - task: SonarCloudPublish@4
     inputs:
       pollingTimeoutSec: '300'
+
+  - script: |
+      python benchmarks/run_benchmarks.py
+    displayName: 'Run guessing game performance benchmark (10 runs, stdlib only)'
+    continueOnError: true
