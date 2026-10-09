@@ -142,6 +142,29 @@
   （已排除作為唯一機制——若直譯器層級發生非預期中止（例如被系統 OOM 砍掉），仍需要
   YAML 層的 `continueOnError` 作為最後一道防線）。
 
+### D9. `bench_driver.py` 匯入 `guessing_game`：以 `sys.path` 插入 `src/`（實作階段變更）
+
+- **Decision**: `benchmarks/bench_driver.py` 在匯入 `guessing_game.cli`／`guessing_game.engine`
+  之前，先以 `sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))` 將
+  `src/` 的絕對路徑加入 `sys.path`。
+- **Rationale**: `/speckit-implement` 執行時發現，本專案並未安裝為套件（`pip show
+  guessing_game` 回報找不到），`guessing_game` 只能透過 `pyproject.toml` 的
+  `[tool.pytest.ini_options]` 的 `pythonpath = ["src"]` 在 pytest 執行環境下被解析；這個設定
+  只對 pytest 生效，對一般的 `python benchmarks/bench_driver.py` 子行程呼叫沒有作用，因此
+  `measure_once.py` 以 `subprocess.run()` 啟動 `bench_driver.py` 時會因
+  `ModuleNotFoundError: No module named 'guessing_game'` 以非零結束碼失敗。以
+  `Path(__file__)` 計算絕對路徑（而非相依於呼叫者目前的工作目錄或任何環境變數）可讓
+  `bench_driver.py` 不論從哪個目錄、哪一層 subprocess 呼叫，都能穩定匯入到
+  `guessing_game`；修改僅限 `benchmarks/bench_driver.py` 本身，未變更 `src/` 下任何檔案。
+- **Alternatives considered**: 在呼叫鏈最外層（`run_benchmarks.py`）或 pipeline 步驟設定
+  `PYTHONPATH=src` 環境變數，讓子行程繼承（已排除——需要同時確保
+  `run_benchmarks.py`→`measure_once.py`→`bench_driver.py` 三層 subprocess 呼叫都正確繼承
+  該環境變數，較脆弱也較隱性；讓 `bench_driver.py` 自己用程式碼明確插入路徑，不依賴外部
+  呼叫者是否記得設定環境變數，較為穩健）；將專案改為可安裝套件（例如新增
+  `pyproject.toml` 的 `[project]`／`setup.cfg` 並以 `pip install -e .` 安裝）（已排除——
+  屬於專案打包方式的變更，超出本 feature「只新增 CI 設定與量測工具」的範圍，且會牽動
+  `src/` 以外、本 feature 原本不需要異動的設定檔）。
+
 ## Outstanding NEEDS CLARIFICATION
 
 無。使用者於本次 `/speckit-plan` 輸入已涵蓋全部技術決策所需資訊，且 `/speckit-clarify`
