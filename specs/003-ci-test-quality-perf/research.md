@@ -62,7 +62,9 @@
 
 - **Decision**: `benchmarks/bench_driver.py` 不直接在自己的迴圈裡呼叫
   `GameEngine.guess()`，而是呼叫既有的遊戲介面 `cli.run(input_fn=..., output_fn=...,
-  engine=...)` 來完成一局，步驟如下：
+  engine=...)` 來完成一局。使用的固定種子為 `SEED = 20261009`（取自本 spec 的建立日期
+  2026-10-09，純粹為了好記且不需臨時決定；數值本身對正確性沒有特殊意義，換成任何其他
+  固定整數同樣成立）。步驟如下：
   1. 用固定種子 `SEED` 建一個「影子」`GameEngine(rng=random.Random(SEED))`，在
      `bench_driver.py` 自己的程式碼裡（不呼叫 `run()`）以二分搜尋演算法對這個影子
      engine 重複呼叫 `guess(mid)`，記錄下每一步的猜測值，直到 `is_finished`，得到一份

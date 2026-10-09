@@ -26,17 +26,26 @@
        testResultsFormat: 'JUnit'
        testResultsFiles: 'test-results.xml'
        testRunTitle: '猜數字遊戲 pytest 結果'
+       failTaskOnMissingResultsFile: true
 
    - task: PublishCodeCoverageResults@2
-     condition: succeededOrFailed()
      inputs:
        summaryFileLocation: 'coverage.xml'
        pathToSources: 'src'
+       failIfCoverageEmpty: true
    ```
 
-   `condition: succeededOrFailed()` 確保即使測試失敗，Tests 分頁仍能呈現逐案例結果
-   （對應 FR-002／FR-003；pipeline 整體失敗與否仍由既有的 pytest 結束碼決定，不受此
-   condition 影響）。
+   `PublishTestResults@2` 保留 `condition: succeededOrFailed()`——測試失敗時開發者最需要
+   看到是哪些測試失敗（US1／FR-002／FR-003），因此即使 pytest 步驟整體失敗，這個步驟仍要
+   執行並發布逐案例結果。`PublishCodeCoverageResults@2` **不設定** `condition`（沿用預設的
+   `succeeded()`）：測試步驟本身失敗時這個任務不會執行，覆蓋率不會被發布到 pipeline 摘要
+   或 SonarQube Cloud（對應 spec.md 的 Edge Case，以及 SC-002「100% 的 pipeline **成功
+   執行**」）。
+
+   `failTaskOnMissingResultsFile`（`PublishTestResults@2`）與 `failIfCoverageEmpty`
+   （`PublishCodeCoverageResults@2`）皆為 Azure Pipelines 官方任務參考文件中記載的既有輸入
+   參數（預設皆為 `false`），啟用後可在結果檔完全找不到／覆蓋率報告為空時讓對應任務自己
+   失敗，落實 FR-013 的錯誤可見性要求。
 
 3. **`SonarCloudAnalyze@4` 與 `SonarCloudPublish@4` 維持不變**（此時 `coverage.xml` 已存在，
    且 `sonar-project.properties` 已指向它，見下方）。

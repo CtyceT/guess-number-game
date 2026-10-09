@@ -61,3 +61,8 @@ git status --short src/
 6. 確認無論效能數字為何，pipeline 整體執行結果（成功/失敗）仍只由建置與測試步驟決定
    （FR-010）；可對照「效能量測」步驟本身的狀態（即使該步驟顯示警告或失敗，整體 pipeline
    不受影響，因為該步驟設有 `continueOnError: true`）。
+7. FR-013／FR-014 的故障情境（例如暫時讓 pytest-cov 安裝失敗、或讓 SonarQube Cloud 連線
+   逾時）**本次不另外在 Azure DevOps 上實際製造失敗來驗證**，以避免消耗額外的 pipeline
+   執行額度；這兩個需求改以 `PublishTestResults@2` 的 `failTaskOnMissingResultsFile` 與
+   `PublishCodeCoverageResults@2` 的 `failIfCoverageEmpty`（見 `contracts/pipeline-steps.md`）
+   作為機制保證，依據官方文件記載的既定行為，不再另外實地演練。
