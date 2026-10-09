@@ -1,21 +1,29 @@
 <!--
 Sync Impact Report
-- Version change: (template, unversioned) → 1.0.0
-- Modified principles: none (initial ratification; all principles newly defined)
-- Added sections: Core Principles I–V, Additional Constraints, Development Workflow, Governance
+- Version change: 1.0.0 → 1.1.0
+- Modified principles: I. 技術棧限制（Python 3.11+、僅標準函式庫、pytest）
+  → I. 技術棧限制（Python 3.11+、僅標準函式庫、pytest、pytest-cov）
+  - 新增：開發與 CI 環境除 pytest 外，MAY 使用 pytest-cov 產生測試覆蓋率報告。
+  - 新增：效能量測工具 MUST 僅使用標準函式庫。
+  - 執行期程式碼僅限標準函式庫之限制維持不變。
+- Added sections: none
 - Removed sections: none
+- Other changes: Additional Constraints 之相依管理條款同步更新，納入 pytest-cov 為允許相依。
 - Deferred TODOs: none
 -->
 # 終端機猜數字遊戲 Constitution
 
 ## Core Principles
 
-### I. 技術棧限制（Python 3.11+、僅標準函式庫、pytest）
+### I. 技術棧限制（Python 3.11+、僅標準函式庫、pytest、pytest-cov）
 - 程式碼 MUST 以 Python 3.11 或更新版本實作。
 - 執行期程式碼 MUST 僅使用 Python 標準函式庫，不得引入任何第三方套件。
-- 測試 MUST 使用 pytest；pytest 是唯一允許的第三方相依，且僅限開發／測試環境。
+- 測試 MUST 使用 pytest；開發與 CI 環境除 pytest 外，MAY 使用 pytest-cov 產生測試覆蓋率報告。
+- pytest 與 pytest-cov 是僅允許的第三方相依，且僅限開發／CI／測試環境，不得用於執行期程式碼。
+- 效能量測工具 MUST 僅使用 Python 標準函式庫（例如 `timeit`），不得引入第三方效能量測套件。
 
-理由：本專案用於練習 SDD 流程，零相依可降低環境變因，讓學習聚焦於流程本身。
+理由：本專案用於練習 SDD 流程，零相依可降低環境變因，讓學習聚焦於流程本身；納入 pytest-cov
+可驗證測試覆蓋率而不影響執行期的零相依原則；效能量測限定標準函式庫以維持環境一致性與結果可重現性。
 
 ### II. Google Python Style Guide 與型別／文件規範
 - 程式碼 MUST 遵循 Google Python Style Guide。
@@ -55,7 +63,7 @@ Sync Impact Report
 
 - 專案 MUST 維持精簡：僅實作規格中明確要求的功能，避免預先設計與不必要的抽象。
 - 專案結構 MUST 將邏輯層、I/O 層與測試分置於不同模組或目錄，以體現原則 III。
-- 相依管理：除 pytest 外新增任何相依，MUST 先依 Governance 程序修訂本憲章。
+- 相依管理：除 pytest 與 pytest-cov 外新增任何相依，MUST 先依 Governance 程序修訂本憲章。
 
 ## Development Workflow
 
@@ -78,4 +86,4 @@ Sync Impact Report
 - 合規審查：每次計畫審查與合併審查 MUST 驗證是否符合本憲章；
   任何偏離 MUST 有書面理由，否則不得合併。
 
-**Version**: 1.0.0 | **Ratified**: 2026-09-25 | **Last Amended**: 2026-09-25
+**Version**: 1.1.0 | **Ratified**: 2026-09-25 | **Last Amended**: 2026-10-09
